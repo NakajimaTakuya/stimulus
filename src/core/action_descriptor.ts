@@ -30,6 +30,11 @@ export const defaultActionDescriptorFilters: ActionDescriptorFilters = {
       return true
     }
   },
+
+  ancestor({ event, element }) {
+    const target = event.target as HTMLElement;
+    return target?.contains(element);
+  }
 }
 
 export interface ActionDescriptor {

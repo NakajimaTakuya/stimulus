@@ -2,10 +2,10 @@ import type { Controller } from "src/core"
 import { LogControllerTestCase } from "../../cases/log_controller_test_case"
 
 export default class EventOptionsTests extends LogControllerTestCase {
-  identifier = ["c", "d"]
+  identifier = ["c", "d", "e"]
   fixtureHTML = `
     <div data-controller="c d">
-      <button></button>
+      <button data-controller="e"></button>
       <details></details>
     </div>
     <div id="outside"></div>
@@ -178,6 +178,22 @@ export default class EventOptionsTests extends LogControllerTestCase {
     this.assertNoActions()
   }
 
+  async "test ancestor option on button"() {
+    await this.setAction(this.buttonElement, "c:foo@document->e#log:ancestor")
+
+    await this.triggerEvent(this.element, "c:foo")
+
+    this.assertActions({ name: "log", eventType: "c:foo" })
+  }
+
+  async "test ancestor option on outside"() {
+    await this.setAction(this.outsideElement, "c:foo@document->e#log:ancestor")
+
+    await this.triggerEvent(this.element, "c:foo")
+
+    this.assertNoActions()
+  }
+
   async "test custom action option callback params contain the controller instance"() {
     let lastActionOptions: { controller?: Controller<Element> } = {}
 
@@ -312,5 +328,9 @@ export default class EventOptionsTests extends LogControllerTestCase {
 
   get detailsElement() {
     return this.findElement("details")
+  }
+
+  get outsideElement() {
+    return this.findElement("#outside")
   }
 }
